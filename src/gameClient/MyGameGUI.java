@@ -38,31 +38,31 @@ public class MyGameGUI implements Runnable {
 		openWindow();
 	}
 
-/*
- * returns the level of this game.
- */
+	/*
+	 * returns the level of this game.
+	 */
 	public synchronized int getLevel() {
 		return this.level;
 	}
-/*
- * set the level of this game.
- */
+	/*
+	 * set the level of this game.
+	 */
 	public synchronized void setLevel(int level) {
 		this.level = level;
 	}
 
-/*
- * Sets the size of the Window of the game.
- */
+	/*
+	 * Sets the size of the Window of the game.
+	 */
 	private void openWindow() {
 		StdDraw.setCanvasSize(1000, 500);
 	}
 
-/*
- * This method draws the graph. In more details, this function draws the graph with certain scales 
- * that we defined in the function, gets the location of each Node , draws them and draws there edges on the Window.
- * This method also sets colors and all what is linked to graphics and visualization of the graph.
- */
+	/*
+	 * This method draws the graph. In more details, this function draws the graph with certain scales 
+	 * that we defined in the function, gets the location of each Node , draws them and draws there edges on the Window.
+	 * This method also sets colors and all what is linked to graphics and visualization of the graph.
+	 */
 	private void drawGraph() {
 		Collection<node_data> nodes = this.g.getV();
 		double maxX = Double.NEGATIVE_INFINITY;
@@ -101,21 +101,21 @@ public class MyGameGUI implements Runnable {
 		}
 	}
 
-/*
- * This method gets each Fruit (the string , which is the path to a picture) and draws it on the graph by getting its location and its image.
- */
+
+	/*
+	 * This method gets each Fruit (the string , which is the path to a picture) and draws it on the graph by getting its location and its image.
+	 */
 	private void drawFruit() {
 		List<String> Fruit = this.game.getFruits();
 		for (String i : Fruit) {
-			System.out.println(i);
 			Fruit temp = new Fruit(i);
 			StdDraw.picture(temp.getLocation().x(), temp.getLocation().y(), temp.getImage(), 0.0008, 0.0008);
 		}
 	}
 
-/*
- * This method gets each Robot (the string , which is the path to a picture) and draws it on the graph by getting its location and its image.
- */
+	/*
+	 * This method gets each Robot (the string , which is the path to a picture) and draws it on the graph by getting its location and its image.
+	 */
 	private void drawrobots() {
 		List<String> robots = this.game.getRobots();
 		for (String i : robots) {
@@ -124,9 +124,9 @@ public class MyGameGUI implements Runnable {
 		}
 	}
 
-/*
- * This method make a visualization of the time while the game is running.
- */
+	/*
+	 * This method make a visualization of the time while the game is running.
+	 */
 	public void drawTime() {
 		long time = this.game.timeToEnd();
 		StdDraw.setPenColor(Color.ORANGE);
@@ -135,9 +135,9 @@ public class MyGameGUI implements Runnable {
 		else StdDraw.textRight(StdDraw.xmax-0.0005, StdDraw.ymax-0.0005, "game over");
 	}
 
-/*
- * This method inits the Game from the server.
- */
+	/*
+	 * This method inits the Game from the server.
+	 */
 	private void initGameServer(String s) {
 		Gson gson = new Gson();
 		MyGameGUI temp = gson.fromJson(s, MyGameGUI.class);
@@ -149,13 +149,12 @@ public class MyGameGUI implements Runnable {
 		int robots;
 	}
 
-/*
- * This method enables the user to choose which level he wants to play. 
- * Depending on the level, the graph will be loaded with its fruits and Robots. In this mode, the user can choose from where he wants to move the robots to.
- * This method will use other methods in order to set everything in place. 
- */
+	/*
+	 * This method enables the user to choose which level he wants to play. 
+	 * Depending on the level, the graph will be loaded with its fruits and Robots. In this mode, the user can choose from where he wants to move the robots to.
+	 * This method will use other methods in order to set everything in place. 
+	 */
 	public void manualGame() {
-		
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
 		this.level = levelToPrint;
@@ -175,21 +174,21 @@ public class MyGameGUI implements Runnable {
 			startGameManual();
 			runGame();
 
-			
-			
+
+
 		}
 		StdDraw.disableDoubleBuffering();
 		StdDraw.clear();
 		end();
-		
+
 	}
 
-/*
- * This method enables the user to choose which level he wants to play but doesn't give him the choice to move the robots. 
- * Everything is done in an automatic manner.  
- */
+	/*
+	 * This method enables the user to choose which level he wants to play but doesn't give him the choice to move the robots. 
+	 * Everything is done in an automatic manner.  
+	 */
 	public void automaticGame() {
-		
+
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
 		this.level = levelToPrint;
@@ -225,10 +224,10 @@ public class MyGameGUI implements Runnable {
 		KML_Logger.closeFile(this.level-1 + ".kml");
 	}
 
-/*
- * Like its name says, this method enables the user to add Robots manually. 
- * The function allow the user to place the robots on a specific node by giving it's key number.
- */
+	/*
+	 * Like its name says, this method enables the user to add Robots manually. 
+	 * The function allow the user to place the robots on a specific node by giving it's key number.
+	 */
 	public boolean addManualRobots() {
 		for (int i = 0; i < this.robots; i++) {
 			final JFrame addManual = new JFrame();
@@ -255,9 +254,9 @@ public class MyGameGUI implements Runnable {
 		return true;
 	}
 
-/*
- * Returns an integer and allows the user to select a specific level from the 24 levels existing.
- */
+	/*
+	 * Returns an integer and allows the user to select a specific level from the 24 levels existing.
+	 */
 	private int  levelSelect() {
 		String levelS = JOptionPane.showInputDialog("select a level Between 1 and 24\nAny other character for random", null);
 		int level = -1;
@@ -272,9 +271,9 @@ public class MyGameGUI implements Runnable {
 		return level;
 	}
 
-/*
- * This methods is used by the manualGame function above, it enables the user to select a destination node to go to.
- */
+	/*
+	 * This methods is used by the manualGame function above, it enables the user to select a destination node to go to.
+	 */
 	public void startGameManual() {
 		List<String> robots = this.game.move();
 		for (String i : robots) {
@@ -291,104 +290,112 @@ public class MyGameGUI implements Runnable {
 		}
 	}
 
-/*
- * This methods is used by the automaticGame function above, this function will start the game and every action is done 
- * automatically : how the robots move, how the fruits are set on the graph ,etc...
- */
+	/*
+	 * This methods is used by the automaticGame function above, this function will start the game and every action is done 
+	 * automatically : how the robots move, how the fruits are set on the graph ,etc...
+	 */
 	public void startGameautomatic() {
-		List<String> robots = this.game.move();
-		for (String i : robots) {
-			robot temp = new robot(i);
-			if (temp.getDest() == -1) {
-				this.game.chooseNextEdge(temp.getId(), nextNode(temp, 0.0));
-			}
-		}
-	}
-
-/*
- * This method calculates to which node each robot has to go to.
- */
-	private int nextNode(robot robot, double epsilon) {
-		int dest = -1;
 		List<String> fruitsS = this.game.getFruits();
 		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
 		for (String string : fruitsS) {
 			fruits.add(new Fruit(string));
 		}
-		Collection<node_data> Nodes = this.g.getV();
-		double distance = Double.POSITIVE_INFINITY;
-		edge_data fruitIn = null;
-		for (Fruit f : fruits) {
-			for (node_data i : Nodes) {
-				for (node_data j : Nodes) {
-					if (i.getKey() == j.getKey())continue;
-					double m = (i.getLocation().y() - j.getLocation().y()) / (i.getLocation().x() - j.getLocation().x());
-					double y = (m*(f.location.x() - i.getLocation().x())) + i.getLocation().y();
-					if (y == f.location.y() + epsilon || y == f.location.y() - epsilon) {
-						fruitIn = this.g.getEdge(i.getKey(), j.getKey());
+		List<String> robots = this.game.move();
+		for (String i : robots) {
+			robot temp = new robot(i);
+			if (temp.getDest() == -1) {
+				double epsilon = 0.000000001;
+				int dest = -1;
+				Collection<node_data> Nodes = this.g.getV();
+				double distance = Double.POSITIVE_INFINITY;
+				Fruit theChosenOne = null;
+				edge_data fruitIn = null;
+				for (Fruit f : fruits) {
+					if (f.onSight) continue;
+					for (node_data i1 : Nodes) {
+						for (node_data j : Nodes) {
+							double x1 = i1.getLocation().x(), x2 = j.getLocation().x();
+							double y1 = i1.getLocation().y(), y2 = j.getLocation().y();
+							double m = (y1 - y2) / (x1 - x2);
+							double y = (m * (f.location.x() - x1)) + y1;
+							if (y + epsilon > f.getLocation().y() && y - epsilon < f.getLocation().y())
+								fruitIn = this.g.getEdge(i1.getKey(), j.getKey());
+						}
+					}
+					if (fruitIn != null) {
+						if (f.type == -1) {
+							double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
+							double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
+							if (srcY > destY) {
+								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getSrc());
+								if (tempDistance < distance) {
+									distance = tempDistance;
+									theChosenOne = f;
+									dest = fruitIn.getSrc();
+									if (dest == temp.src) {
+										dest = fruitIn.getDest();
+									}
+								}
+							}
+							else {
+								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getDest());
+								if (tempDistance < distance) {
+									distance = tempDistance;
+									theChosenOne = f;
+									dest = fruitIn.getDest();
+									if (dest == temp.src) {
+										dest = fruitIn.getSrc();
+									}
+								}
+							}
+						}
+						else {
+							double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
+							double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
+							if (srcY < destY) {
+								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getSrc());
+								if (tempDistance < distance) {
+									distance = tempDistance;
+									theChosenOne = f;
+									dest = fruitIn.getSrc();
+									if (dest == temp.src) {
+										dest = fruitIn.getDest();
+									}
+								}
+							}
+							else {
+								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getDest());
+								if (tempDistance < distance) {
+									distance = tempDistance;
+									theChosenOne = f;
+									dest = fruitIn.getDest();
+									if (dest == temp.src) {
+										dest = fruitIn.getSrc();
+									}
+								}
+							}
+						}
 					}
 				}
-			}
-			if (fruitIn != null) {
-				if (f.type == -1) {
-					double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
-					double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
-					if (srcY > destY) {
-						double tempDistance = this.ga.shortestPathDist(robot.src, fruitIn.getSrc());
-						if (tempDistance < distance) {
-							distance = tempDistance;
-							dest = fruitIn.getSrc();
-							if (dest == robot.src) {
-								dest = fruitIn.getDest();
-							}
-						}
-					}
-					else {
-						double tempDistance = this.ga.shortestPathDist(robot.src, fruitIn.getDest());
-						if (tempDistance < distance) {
-							distance = tempDistance;
-							dest = fruitIn.getDest();
-							if (dest == robot.src) {
-								dest = fruitIn.getSrc();
-							}
-						}
-					}
+				
+				if (dest == -1) {
+					System.out.println("Error"); 
+					this.game.chooseNextEdge(temp.getId(), -1);
 				}
 				else {
-					double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
-					double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
-					if (srcY < destY) {
-						double tempDistance = this.ga.shortestPathDist(robot.src, fruitIn.getSrc());
-						if (tempDistance < distance) {
-							distance = tempDistance;
-							dest = fruitIn.getSrc();
-							if (dest == robot.src) {
-								dest = fruitIn.getDest();
-							}
-						}
-					}
-					else {
-						double tempDistance = this.ga.shortestPathDist(robot.src, fruitIn.getDest());
-						if (tempDistance < distance) {
-							distance = tempDistance;
-							dest = fruitIn.getDest();
-							if (dest == robot.src) {
-								dest = fruitIn.getSrc();
-							}
-						}
-					}
+					List<node_data> path =  this.ga.shortestPath(temp.src, dest);
+					theChosenOne.onSight = true;
+					this.game.chooseNextEdge(temp.getId(), path.get(1).getKey());
 				}
 			}
 		}
-		if (dest == -1)return nextNode(robot, epsilon + 0.000000000000001);
-		List<node_data> path =  this.ga.shortestPath(robot.src, dest);
-		return path.get(1).getKey();
 	}
 
 
-/*
- * Using the StdDraw class and sets the Graph, its timer , robots , fruits and at the end shows the Graphic interface with all its components. 
- */
+
+	/*
+	 * Using the StdDraw class and sets the Graph, its timer , robots , fruits and at the end shows the Graphic interface with all its components. 
+	 */
 	public void runGame() {
 		this.game.move();
 		StdDraw.clear();
@@ -399,9 +406,9 @@ public class MyGameGUI implements Runnable {
 		StdDraw.show();
 	}
 
-/*
- * When the game ends, this method will show on the screen a "game end message" and how much points were gained during the game.
- */
+	/*
+	 * When the game ends, this method will show on the screen a "game end message" and how much points were gained during the game.
+	 */
 	public void end() {
 		int points = 0;
 		for (String i : this.game.getRobots()) {
@@ -413,12 +420,12 @@ public class MyGameGUI implements Runnable {
 		StdDraw.textRight(((StdDraw.xmax + StdDraw.xmin) / 2), ((StdDraw.ymax + StdDraw.ymin) / 2), "your points: " + points);
 	}
 
-/*
- * This method adds Robots automatically to the graph. It is used in the automaticGame method above. 
- * Depending on the location of each fruit on the graph, the robot will be set on the graph in order to get the highest score.
- */
+	/*
+	 * This method adds Robots automatically to the graph. It is used in the automaticGame method above. 
+	 * Depending on the location of each fruit on the graph, the robot will be set on the graph in order to get the highest score.
+	 */
 	public void addAutomaticlRobots() {		
-		double epsilon = 0.0000000001;			//TODO
+		double epsilon = 0.000000001;			//TODO
 		List<String> fruitsString = this.game.getFruits();
 		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
 		for (String string : fruitsString) {
@@ -437,35 +444,33 @@ public class MyGameGUI implements Runnable {
 			for (node_data i : Nodes) {
 				for (node_data j : Nodes) {
 					if (i.getKey() == j.getKey())continue;
-					if ((i.getLocation().x() - epsilon < max.getLocation().x() && j.getLocation().x() + epsilon > max.getLocation().x()) ||
-							(i.getLocation().x() + epsilon > max.getLocation().x() && j.getLocation().x() - epsilon < max.getLocation().x())) {
-						if ((i.getLocation().y() - epsilon < max.getLocation().y() && j.getLocation().y() + epsilon > max.getLocation().y()) ||
-								(i.getLocation().y() + epsilon > max.getLocation().y() && j.getLocation().y() - epsilon < max.getLocation().y())) {
-							fruitIn = this.g.getEdge(i.getKey(), j.getKey());
-							if (fruitIn != null)break;
-						}
-					}
+					double x1 = i.getLocation().x(), x2 = j.getLocation().x();
+					double y1 = i.getLocation().y(), y2 = j.getLocation().y();
+					double m = (y1 - y2) / (x1 - x2);
+					double y = (m * (max.location.x() - x1)) + y1;
+					if (y + epsilon > max.getLocation().y() && y - epsilon < max.getLocation().y()) fruitIn = this.g.getEdge(i.getKey(), j.getKey());
+					if (fruitIn != null)break;
 				}
+
 				if (fruitIn != null)break;
 			}
-			double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
-			double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
+			int srcKey = fruitIn.getSrc();
+			int destKey = fruitIn.getDest();
 			if (max.type == -1) {
-				if (srcY > destY) this.game.addRobot(fruitIn.getSrc());
-				else this.game.addRobot(fruitIn.getDest());
+				this.game.addRobot(Math.max(srcKey, destKey));
+
 			}
 			else {
-				if (srcY < destY) this.game.addRobot(fruitIn.getSrc());
-				if (srcY > destY) this.game.addRobot(fruitIn.getDest());
+				this.game.addRobot(Math.min(srcKey, destKey));
 			}
 			fruits.remove(max);
 		}
 	}
 
-/*
- * If the selected mode was "manual", the threads in charge will be in action to run the game in manual mode.
- * If the selected mode was automatic, the game will run through different threads.
- */
+	/*
+	 * If the selected mode was "manual", the threads in charge will be in action to run the game in manual mode.
+	 * If the selected mode was automatic, the game will run through different threads.
+	 */
 	@Override
 	public void run() {
 		if (this.type.equals("manual")) manualGame();

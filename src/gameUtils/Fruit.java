@@ -9,16 +9,18 @@ public class Fruit {
 	public String image;
 	public double value;
 	public int type;
+	public boolean onSight;
 
 /*
  * Builds the object fruit from a json String
  */
-	public Fruit(String json) { //read from json file
+	public Fruit(String json) {
 		json = json.substring(9, json.length()-1);
 		FruitTemp temp = new FruitTemp(json);
 		this.location = new Point3D(temp.pos);
 		this.value = temp.value;
 		this.type = temp.type;
+		this.onSight = false;
 		if (temp.type == -1) {
 			this.image = "Images/down.png";
 		}
