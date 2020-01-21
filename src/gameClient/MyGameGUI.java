@@ -456,7 +456,7 @@ public class MyGameGUI implements Runnable {
 			game.move();
 			counter++;
 			try {
-				Thread.sleep(100);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
