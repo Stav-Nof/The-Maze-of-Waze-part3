@@ -2,6 +2,7 @@ package gameClient;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ public class MyGameGUI implements Runnable {
 	int thread;
 	Graph_Algo ga;
 	public String type;
+	int movesCounter = 0;
 
 	public MyGameGUI() {
 		this.level = -1;
@@ -187,8 +189,7 @@ public class MyGameGUI implements Runnable {
 	 * This method enables the user to choose which level he wants to play but doesn't give him the choice to move the robots. 
 	 * Everything is done in an automatic manner.  
 	 */
-	public void automaticGame() {
-
+	public void automaticGameWithKML() {
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
 		this.level = levelToPrint;
@@ -203,25 +204,83 @@ public class MyGameGUI implements Runnable {
 		this.drawFruit();
 		this.addAutomaticlRobots();
 		this.drawrobots();
-		KML_Logger.openFile((this.level - 1) + ".kml");
+		KML_Logger.openFile((level) + ".kml");
+		this.game.startGame();
+		StdDraw.enableDoubleBuffering();
+		game_service temp = this.game;
+		int counter = 0;
+		Runnable gameShow = new Runnable() {
+			@Override
+			public void run() {
+				moveGame(temp);
+
+			}
+		};
+		Thread thread1 = new Thread(gameShow);
+		thread1.start();
+		
+		while (this.game.isRunning()) {
+			startGameAutomatic();
+			runGame();
+			List<String> fruits = this.game.getFruits();
+			List<String> robots = this.game.getRobots();
+
+			Runnable runKML = new Runnable() {
+				@Override
+				public void run() {
+					LocalDateTime time = java.time.LocalDateTime.now();
+					for (String i : fruits) {
+						KML_Logger.addFruit(level + ".kml", i, time);
+					}
+					for (String i : robots) {
+						KML_Logger.addRobot(level + ".kml", i, time);
+					}
+				}
+			};
+			Thread thread = new Thread(runKML);
+			thread.start();
+
+		}
+		StdDraw.disableDoubleBuffering();
+		StdDraw.clear();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		end();
+		KML_Logger.closeFile(level + ".kml");
+		System.out.println(this.movesCounter);
+	}
+
+
+	public void automaticGame() {
+		int levelToPrint = levelSelect();
+		this.GameServer = new GameServer();
+		this.level = levelToPrint;
+		this.game = Game_Server.getServer(levelToPrint - 1);
+		this.initGameServer(game.toString());
+		this.robots = this.GameServer.robots;
+		game = Game_Server.getServer(this.level-1);
+		this.g = new DGraph();
+		this.g.init(this.game.getGraph());
+		this.ga = new Graph_Algo(this.g);
+		this.drawGraph();
+		this.drawFruit();
+		this.addAutomaticlRobots();
+		this.drawrobots();
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
 		while (this.game.isRunning()) {
-			startGameautomatic();
+			startGameAutomatic();
 			runGame();
 			List<String> fruits = this.game.getFruits();
-			for (String i : fruits) {
-				KML_Logger.addFruit(this.level - 1 + ".kml", i);
-			}
-			List<String> robots = this.game.getRobots();
-			for (String i : robots) {
-				KML_Logger.addRobot(this.level - 1 + ".kml", i);
-			}
 		}
 		StdDraw.disableDoubleBuffering();
 		StdDraw.clear();
 		end();
-		KML_Logger.closeFile(this.level-1 + ".kml");
+		System.out.println(this.movesCounter);
 	}
 
 	/*
@@ -276,6 +335,7 @@ public class MyGameGUI implements Runnable {
 	 */
 	public void startGameManual() {
 		List<String> robots = this.game.move();
+		this.movesCounter++;
 		for (String i : robots) {
 			robot temp = new robot(i);
 			if (temp.getDest() == -1) {
@@ -294,14 +354,15 @@ public class MyGameGUI implements Runnable {
 	 * This methods is used by the automaticGame function above, this function will start the game and every action is done 
 	 * automatically : how the robots move, how the fruits are set on the graph ,etc...
 	 */
-	public void startGameautomatic() {
+	public void startGameAutomatic() {
 		List<String> fruitsS = this.game.getFruits();
 		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
 		for (String string : fruitsS) {
 			fruits.add(new Fruit(string));
 		}
-		List<String> robots = this.game.move();
+		List<String> robots = this.game.getRobots();
 		for (String i : robots) {
+			System.out.println(i);
 			robot temp = new robot(i);
 			if (temp.getDest() == -1) {
 				double epsilon = 0.000000001;
@@ -377,7 +438,7 @@ public class MyGameGUI implements Runnable {
 						}
 					}
 				}
-				
+
 				if (dest == -1) {
 					System.out.println("Error"); 
 					this.game.chooseNextEdge(temp.getId(), -1);
@@ -392,12 +453,25 @@ public class MyGameGUI implements Runnable {
 	}
 
 
+	public static void moveGame(game_service game) {
+		int counter = 0;
+		while (game.isRunning()){
+			game.move();
+			counter++;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(counter);
+	}
+
 
 	/*
 	 * Using the StdDraw class and sets the Graph, its timer , robots , fruits and at the end shows the Graphic interface with all its components. 
 	 */
 	public void runGame() {
-		this.game.move();
 		StdDraw.clear();
 		drawGraph();
 		drawFruit();
@@ -475,6 +549,7 @@ public class MyGameGUI implements Runnable {
 	public void run() {
 		if (this.type.equals("manual")) manualGame();
 		if (this.type.equals("automatic")) automaticGame();
+		if (this.type.equals("automatic with KML")) automaticGameWithKML();
 
 	}
 }

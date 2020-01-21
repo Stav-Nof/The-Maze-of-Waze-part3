@@ -721,10 +721,13 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 		menuBar.add(menu);
 		JMenuItem manual = new JMenuItem("manual");
 		JMenuItem automatic = new JMenuItem("automatic");
+		JMenuItem automaticWithKML = new JMenuItem("automatic with KML");
 		automatic.addActionListener(std);
 		manual.addActionListener(std);
+		automaticWithKML.addActionListener(std);
 		menu.add(manual);
 		menu.add(automatic);
+		menu.add(automaticWithKML);
 		return menuBar;
 	}
 
@@ -1658,9 +1661,9 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
-			MyGameGUI manual = new MyGameGUI();
-			manual.type = action;
-			Thread temp = new Thread(manual);
+			MyGameGUI game = new MyGameGUI();
+			game.type = action;
+			Thread temp = new Thread(game);
 			temp.start();
 	}
 
