@@ -190,10 +190,10 @@ public class MyGameGUI implements Runnable {
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
 		this.level = levelToPrint;
-		this.game = Game_Server.getServer(levelToPrint - 1);
+		this.game = Game_Server.getServer(levelToPrint);
 		this.initGameServer(game.toString());
 		this.robots = this.GameServer.robots;
-		game = Game_Server.getServer(this.level-1);
+		game = Game_Server.getServer(this.level);
 		this.g = new DGraph();
 		this.g.init(this.game.getGraph());
 		this.ga = new Graph_Algo(this.g);
@@ -202,6 +202,7 @@ public class MyGameGUI implements Runnable {
 		this.addAutomaticlRobots();
 		this.drawrobots();
 		KML_Logger.openFile((level) + ".kml");
+		Game_Server.login(9999);//TODO add your id 
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
 		game_service temp = this.game;
@@ -243,12 +244,12 @@ public class MyGameGUI implements Runnable {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		end();
 		KML_Logger.closeFile(level + ".kml");
 		System.out.println(this.movesCounter);
+		game.sendKML(KML_Logger.KMLtoString(level + ".kml"));
 	}
 
 
@@ -256,10 +257,10 @@ public class MyGameGUI implements Runnable {
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
 		this.level = levelToPrint;
-		this.game = Game_Server.getServer(levelToPrint - 1);
+		this.game = Game_Server.getServer(levelToPrint);
 		this.initGameServer(game.toString());
 		this.robots = this.GameServer.robots;
-		game = Game_Server.getServer(this.level-1);
+		game = Game_Server.getServer(this.level);
 		this.g = new DGraph();
 		this.g.init(this.game.getGraph());
 		this.ga = new Graph_Algo(this.g);
@@ -269,13 +270,28 @@ public class MyGameGUI implements Runnable {
 		this.drawrobots();
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
+		game_service temp = this.game;
+		Runnable gameShow = new Runnable() {
+			@Override
+			public void run() {
+				moveGame(temp);
+
+			}
+		};
+		Thread thread1 = new Thread(gameShow);
+		thread1.start();
+		
 		while (this.game.isRunning()) {
 			startGameAutomatic();
 			runGame();
-			List<String> fruits = this.game.getFruits();
 		}
 		StdDraw.disableDoubleBuffering();
 		StdDraw.clear();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		end();
 		System.out.println(this.movesCounter);
 	}
@@ -314,14 +330,14 @@ public class MyGameGUI implements Runnable {
 	 * Returns an integer and allows the user to select a specific level from the 24 levels existing.
 	 */
 	private int  levelSelect() {
-		String levelS = JOptionPane.showInputDialog("select a level Between 1 and 24\nAny other character for random", null);
+		String levelS = JOptionPane.showInputDialog("select a level Between 0 and 23\nAny other character for random", null);
 		int level = -1;
 		try {
 			level = Integer.parseInt(levelS);
 		}catch (Exception e1) {
 			level = (int) (Math.random()*25);
 		}
-		if (level < 1 || level > 24) {
+		if (level < 0 || level > 23) {
 			level = (int) (Math.random()*25);
 		}
 		return level;
@@ -456,7 +472,7 @@ public class MyGameGUI implements Runnable {
 			game.move();
 			counter++;
 			try {
-				Thread.sleep(50);
+				Thread.sleep(50);		//TODO
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -496,7 +512,7 @@ public class MyGameGUI implements Runnable {
 	 * Depending on the location of each fruit on the graph, the robot will be set on the graph in order to get the highest score.
 	 */
 	public void addAutomaticlRobots() {		
-		double epsilon = 0.000000001;			//TODO
+		double epsilon = 0.000000001;
 		List<String> fruitsString = this.game.getFruits();
 		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
 		for (String string : fruitsString) {
