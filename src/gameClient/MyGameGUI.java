@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -14,13 +13,10 @@ import Server.Game_Server;
 import Server.game_service;
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
-import dataStructure.EdgeData;
 import dataStructure.edge_data;
 import dataStructure.node_data;
 import gameUtils.Fruit;
 import gameUtils.robot;
-import oop_dataStructure.oop_edge_data;
-import oop_dataStructure.oop_graph;
 import utils.Point3D;
 import utils.StdDraw;
 
@@ -202,15 +198,13 @@ public class MyGameGUI implements Runnable {
 		this.addAutomaticlRobots();
 		this.drawrobots();
 		KML_Logger.openFile((level) + ".kml");
-		Game_Server.login(9999);//TODO add your id 
+		Game_Server.login(205479694);//TODO add your id 
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
-		game_service temp = this.game;
-		int counter = 0;
 		Runnable gameShow = new Runnable() {
 			@Override
 			public void run() {
-				moveGame(temp);
+				moveGame();
 
 			}
 		};
@@ -270,11 +264,10 @@ public class MyGameGUI implements Runnable {
 		this.drawrobots();
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
-		game_service temp = this.game;
 		Runnable gameShow = new Runnable() {
 			@Override
 			public void run() {
-				moveGame(temp);
+				moveGame();
 
 			}
 		};
@@ -375,7 +368,6 @@ public class MyGameGUI implements Runnable {
 		}
 		List<String> robots = this.game.getRobots();
 		for (String i : robots) {
-			System.out.println(i);
 			robot temp = new robot(i);
 			if (temp.getDest() == -1) {
 				double epsilon = 0.000000001;
@@ -466,18 +458,16 @@ public class MyGameGUI implements Runnable {
 	}
 
 
-	public static void moveGame(game_service game) {
-		int counter = 0;
-		while (game.isRunning()){
-			game.move();
-			counter++;
+	public void moveGame() {
+		while (this.game.isRunning()){
+			this.game.move();
+			this.movesCounter++;
 			try {
-				Thread.sleep(50);		//TODO
+				Thread.sleep(100);		//TODO
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		System.out.println(counter);
 	}
 
 
