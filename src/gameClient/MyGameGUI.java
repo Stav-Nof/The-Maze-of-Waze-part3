@@ -175,9 +175,6 @@ public class MyGameGUI implements Runnable {
 		while (this.game.isRunning()) {
 			startGameManual();
 			runGame();
-
-
-
 		}
 		StdDraw.disableDoubleBuffering();
 		StdDraw.clear();
