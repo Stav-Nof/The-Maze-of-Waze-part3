@@ -1,11 +1,12 @@
 ![](https://i.imgur.com/FJk2Z3V.png)
 
-This repository based on a our previous project: [The-Maze-of-Waze-part1](https://github.com/Stav-Nof/The-Maze-of-Waze).  
-This project represents a game of robots (Pikachu) and pokeballs.
+This repository based on a our previous project: [The-Maze-of-Waze-part2](https://github.com/yarinShapira/The-Maze-Of-Waze-part2.git).  
+This project represents a game of robots (Pikachu) and pokeballs moving on a board of graph with Vertices and edges.
 
-There are two modes of game:
+There are three modes of game:
 1. Automatic- you choose a level between 1-24 and the server play the best moves for the robots.
 2. Manual- you choose a level between 1-24 and you move the robots Towards the pokeballs.  
+3. Automatic with KML- the same game as the automatic game includes export through KML.
 Note: if you choose any other number, the server will choose random level for you.
 
 All the Pikachu on the graph need to collect the red and blue pokeballs in order to gain as much score and speed as possible.
@@ -27,6 +28,8 @@ It has two data structure from type of hash map that represents the vertices and
 interface of the window, selecting levels, adding robots, select manual or automatic mode and starting the game from the server.
 
 - Window- A class represents the graphical user interface.
+
+- KML_Logger- This class allows you to export the graph, Pikachus and the pokeballs to a KML file. When you open the file, you will see the game moves on a map in Google Earth.
 
 Writing this class We used These links:
 https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html,  
