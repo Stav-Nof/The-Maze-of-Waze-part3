@@ -1,11 +1,14 @@
 package gameClient;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import gameUtils.Fruit;
 import gameUtils.robot;
@@ -108,6 +111,18 @@ public class KML_Logger {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public static String KMLtoString(String file_Name) {
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(new File(file_Name)));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return reader.lines().collect(Collectors.joining(System.lineSeparator()));
 	}
 
 }
