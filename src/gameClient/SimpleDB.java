@@ -20,13 +20,14 @@ public class SimpleDB {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-			int id1 = 999;  // "dummy existing ID  
+			int id1 = 205479694;  // "dummy existing ID  
 			int level = 0;
-			allUsers();
+			//allUsers();
 			printLog();
-			String kml = getKML(id1,level);
-			System.out.println("***** KML file example: ******");
-			System.out.println(kml);
+			//String kml = getKML(id1,level);
+			//System.out.println("***** KML file example: ******");
+			//System.out.println(kml);
+			
 		}
 	/** simply prints all the games as played by the users (in the database).
 	 * 
@@ -37,13 +38,13 @@ public class SimpleDB {
 				Connection connection = 
 						DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcUserPassword);
 				Statement statement = connection.createStatement();
-				String allCustomersQuery = "SELECT * FROM Logs;";
+				String allCustomersQuery = "SELECT * FROM Logs where userID="+205479694+";";
+
 				ResultSet resultSet = statement.executeQuery(allCustomersQuery);
 				
 				while(resultSet.next())
 				{
-					System.out.println("Id: " + resultSet.getInt("UserID")+","+resultSet.getInt("levelID")+","+resultSet.getInt("moves")+","+resultSet.getDate("time"));
-				}
+					System.out.println("Id: " + resultSet.getInt("UserID")+",level "+resultSet.getInt("levelID")+", moves:"+resultSet.getInt("moves")+", time:"+resultSet.getDate("time")+", score:"+resultSet.getInt("score"));				}
 				resultSet.close();
 				statement.close();		
 				connection.close();		

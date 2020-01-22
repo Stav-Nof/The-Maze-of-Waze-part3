@@ -205,7 +205,6 @@ public class MyGameGUI implements Runnable {
 			@Override
 			public void run() {
 				moveGame();
-
 			}
 		};
 		Thread thread1 = new Thread(gameShow);
@@ -463,7 +462,7 @@ public class MyGameGUI implements Runnable {
 			this.game.move();
 			this.movesCounter++;
 			try {
-				Thread.sleep(100);		//TODO
+				Thread.sleep(1);		//TODO
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -487,6 +486,7 @@ public class MyGameGUI implements Runnable {
 	 * When the game ends, this method will show on the screen a "game end message" and how much points were gained during the game.
 	 */
 	public void end() {
+		System.out.println(this.game.toString());
 		int points = 0;
 		for (String i : this.game.getRobots()) {
 			robot temp = new robot(i);
