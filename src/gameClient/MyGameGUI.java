@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import com.google.gson.Gson;
-
 import Server.Game_Server;
 import Server.game_service;
 import algorithms.Graph_Algo;
@@ -159,10 +157,10 @@ public class MyGameGUI implements Runnable {
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
 		this.level = levelToPrint;
-		this.game = Game_Server.getServer(levelToPrint - 1);
+		this.game = Game_Server.getServer(levelToPrint);
 		this.initGameServer(game.toString());
 		this.robots = this.GameServer.robots;
-		game = Game_Server.getServer(this.level-1);
+		game = Game_Server.getServer(this.level);
 		this.g = new DGraph();
 		this.g.init(this.game.getGraph());
 		this.ga = new Graph_Algo(this.g);
@@ -256,13 +254,7 @@ public class MyGameGUI implements Runnable {
 		game.sendKML(KML_Logger.KMLtoString(level + ".kml"));
 	}
 
-/*
- * Automatically runs the game by doing many different actions.
- * The graphic interface gives the player to choose wich level he would like to play,
- * all the rest is automatically decided by the server. We can see in this method that 
- * we call the server in order to move the robots and the fruits.
- * Mostly, the game is ran by the help of the server.
- */
+
 	public void automaticGame() {
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
@@ -492,9 +484,7 @@ public class MyGameGUI implements Runnable {
 	}
 
 
-/*
- * This method is one of the components in order to refresh the screen while the game is Running.
- */
+
 	public void moveGame() {
 		while (this.game.isRunning()){
 			this.game.move();
@@ -540,49 +530,49 @@ public class MyGameGUI implements Runnable {
 	 * Depending on the location of each fruit on the graph, the robot will be set on the graph in order to get the highest score.
 	 */
 	public void addAutomaticlRobots() {		
-		this.game.addRobot(39);
-		this.game.addRobot(16);
+//		this.game.addRobot(39);
+//		this.game.addRobot(16);
 		
-//		double epsilon = 0.000000001;
-//		List<String> fruitsString = this.game.getFruits();
-//		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
-//		for (String string : fruitsString) {
-//			fruits.add(new Fruit(string));
-//		}
-//		int x = 0;
-//		for (; x < this.robots; x++) {
-//			Fruit max = null;
-//			for (Fruit fruit : fruits) {
-//				if (max == null)max = fruit;
-//				else if(max.value < fruit.value);
-//				max = fruit;
-//			}
-//			Collection<node_data> Nodes = this.g.getV();
-//			edge_data fruitIn = null;
-//			for (node_data i : Nodes) {
-//				for (node_data j : Nodes) {
-//					if (i.getKey() == j.getKey())continue;
-//					double x1 = i.getLocation().x(), x2 = j.getLocation().x();
-//					double y1 = i.getLocation().y(), y2 = j.getLocation().y();
-//					double m = (y1 - y2) / (x1 - x2);
-//					double y = (m * (max.location.x() - x1)) + y1;
-//					if (y + epsilon > max.getLocation().y() && y - epsilon < max.getLocation().y()) fruitIn = this.g.getEdge(i.getKey(), j.getKey());
-//					if (fruitIn != null)break;
-//				}
-//
-//				if (fruitIn != null)break;
-//			}
-//			int srcKey = fruitIn.getSrc();
-//			int destKey = fruitIn.getDest();
-//			if (max.type == -1) {
-//				this.game.addRobot(Math.max(srcKey, destKey));
-//
-//			}
-//			else {
-//				this.game.addRobot(Math.min(srcKey, destKey));
-//			}
-//			fruits.remove(max);
-//		}
+		double epsilon = 0.000000001;
+		List<String> fruitsString = this.game.getFruits();
+		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
+		for (String string : fruitsString) {
+			fruits.add(new Fruit(string));
+		}
+		int x = 0;
+		for (; x < this.robots; x++) {
+			Fruit max = null;
+			for (Fruit fruit : fruits) {
+				if (max == null)max = fruit;
+				else if(max.value < fruit.value);
+				max = fruit;
+			}
+			Collection<node_data> Nodes = this.g.getV();
+			edge_data fruitIn = null;
+			for (node_data i : Nodes) {
+				for (node_data j : Nodes) {
+					if (i.getKey() == j.getKey())continue;
+					double x1 = i.getLocation().x(), x2 = j.getLocation().x();
+					double y1 = i.getLocation().y(), y2 = j.getLocation().y();
+					double m = (y1 - y2) / (x1 - x2);
+					double y = (m * (max.location.x() - x1)) + y1;
+					if (y + epsilon > max.getLocation().y() && y - epsilon < max.getLocation().y()) fruitIn = this.g.getEdge(i.getKey(), j.getKey());
+					if (fruitIn != null)break;
+				}
+
+				if (fruitIn != null)break;
+			}
+			int srcKey = fruitIn.getSrc();
+			int destKey = fruitIn.getDest();
+			if (max.type == -1) {
+				this.game.addRobot(Math.max(srcKey, destKey));
+
+			}
+			else {
+				this.game.addRobot(Math.min(srcKey, destKey));
+			}
+			fruits.remove(max);
+		}
 	}
 
 	/*
@@ -601,10 +591,6 @@ public class MyGameGUI implements Runnable {
 
 	//////////////////////////score//////////////////////////
 
-/*
- * This methods displays to the players (according to it's ID that was entered), how many games were played, how many time
- * the player played, the score for each stage and the current level the player has to pass.
- */
 	public void yourScore() {
 		StdDraw.clear();
 		StdDraw.setFont(new Font("arial", Font.PLAIN, 20));
@@ -683,10 +669,7 @@ public class MyGameGUI implements Runnable {
 		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.5 , "Your highest score at stage 23 is:" + Stages[10]);
 	}
 
-/*
- * This method gives the global score of the player compared to the scores of the other students. 
- * The method is getting the scores of each players from the database. 
- */
+
 	public void globalScore() {
 		StdDraw.clear();
 		StdDraw.setFont(new Font("arial", Font.PLAIN, 20));
