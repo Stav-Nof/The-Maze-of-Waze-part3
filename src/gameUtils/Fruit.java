@@ -20,7 +20,7 @@ public class Fruit {
 		this.location = new Point3D(temp.pos);
 		this.value = temp.value;
 		this.type = temp.type;
-		this.onSight = 0;
+		this.onSight = -1;
 		if (temp.type == -1) {
 			this.image = "Images/down.png";
 		}

@@ -363,140 +363,120 @@ public class MyGameGUI implements Runnable {
 	 * automatically : how the robots move, how the fruits are set on the graph ,etc...
 	 */
 	public void startGameAutomatic() {
+		double epsilon = 0.00000001;
+		int dest = -1;
 		if (this.runFruits == null) {
-			List<String> fruitsS = this.game.getFruits();
-			LinkedList<Fruit> fruits = new LinkedList<Fruit>();
-			for (String string : fruitsS) {
-				fruits.add(new Fruit(string));
+			List<String> tempFruits = this.game.getFruits();
+			LinkedList<Fruit> Fruits = new LinkedList<Fruit>();
+			for (String string : tempFruits) {
+				Fruit newFruits = new Fruit(string);
+				Fruits.add(newFruits);
 			}
-			this.runFruits = fruits;
+			this.runFruits = Fruits;
 		}
-		List<String> fruitsS = this.game.getFruits();
-		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
-		for (String string : fruitsS) {
-			fruits.add(new Fruit(string));
+		List<String> tempFruits = this.game.getFruits();
+		LinkedList<Fruit> Fruits = new LinkedList<Fruit>();
+		for (String string : tempFruits) {
+			Fruit newFruits = new Fruit(string);
+			Fruits.add(newFruits);
 		}
-		boolean Similar = true;
-		Iterator<Fruit> it = fruits.iterator();
-		Fruit fTemp = null;
-		for (Fruit i : runFruits) {
-			if (it.hasNext()) fTemp = it.next();
-			if (i.location.x() == fTemp.location.x() && i.location.y() == fTemp.location.y()) continue;
-			else {
-				Similar = false;
-				break;
+		LinkedList<Fruit> todelete = new LinkedList<Fruit>();
+		for (Fruit ifruit : this.runFruits) {
+			boolean delete = true;
+			for (Fruit jfruit : Fruits) {
+				if (ifruit.location.x() == jfruit.location.x() && ifruit.location.y() == jfruit.location.y()) delete = false;
 			}
+			if (delete) todelete.add(ifruit);
 		}
-		if (!Similar )this.runFruits = fruits;
+		this.runFruits.removeAll(todelete);
+		for (Fruit ifruit : Fruits) {
+			boolean add = true;
+			for (Fruit jfruit : this.runFruits) {
+				if (ifruit.location.x() == jfruit.location.x() && ifruit.location.y() == jfruit.location.y()) add = false;
+			}
+			if (add) this.runFruits.add(ifruit);
+		}
 		List<String> robots = this.game.getRobots();
-		for (String i : robots) {
-			robot temp = new robot(i);
-			if (temp.getDest() == -1) {
-				double epsilon = 0.000000001;
-				int dest = -1;
-				Collection<node_data> Nodes = this.g.getV();
-				double distance = Double.POSITIVE_INFINITY;
-				Fruit theChosenOne = null;
-				edge_data fruitIn = null;
-				for (Fruit f : this.runFruits) {
-					if (f.onSight != 0 && f.onSight == temp.getDest()) {
-						for (node_data i1 : Nodes) {
-							for (node_data j : Nodes) {
-								double x1 = i1.getLocation().x(), x2 = j.getLocation().x();
-								double y1 = i1.getLocation().y(), y2 = j.getLocation().y();
-								double m = (y1 - y2) / (x1 - x2);
-								double y = (m * (f.location.x() - x1)) + y1;
-								if (y + epsilon > f.getLocation().y() && y - epsilon < f.getLocation().y())
-									fruitIn = this.g.getEdge(i1.getKey(), j.getKey());
-							}
-						}
-						theChosenOne = f;
-						dest = fruitIn.getSrc();
-						List<node_data> path =  this.ga.shortestPath(temp.src, dest);
-						theChosenOne.onSight = temp.getId();
-						if (path.size() > 1) this.game.chooseNextEdge(temp.getId(), path.get(1).getKey());
-						break;
-					}
-					for (node_data i1 : Nodes) {
-						for (node_data j : Nodes) {
-							double x1 = i1.getLocation().x(), x2 = j.getLocation().x();
-							double y1 = i1.getLocation().y(), y2 = j.getLocation().y();
-							double m = (y1 - y2) / (x1 - x2);
-							double y = (m * (f.location.x() - x1)) + y1;
-							if (y + epsilon > f.getLocation().y() && y - epsilon < f.getLocation().y())
-								fruitIn = this.g.getEdge(i1.getKey(), j.getKey());
-						}
-					}
-					if (fruitIn != null) {
-						if (f.type == -1) {
-							double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
-							double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
-							if (srcY > destY) {
-								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getSrc());
-								if (tempDistance < distance) {
-									distance = tempDistance;
-									theChosenOne = f;
-									dest = fruitIn.getSrc();
-									if (dest == temp.src) {
-										dest = fruitIn.getDest();
-									}
-								}
-							}
-							else {
-								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getDest());
-								if (tempDistance < distance) {
-									distance = tempDistance;
-									theChosenOne = f;
-									dest = fruitIn.getDest();
-									if (dest == temp.src) {
-										dest = fruitIn.getSrc();
-									}
-								}
-							}
-						}
-						else {
-							double srcY = this.g.getNode(fruitIn.getSrc()).getLocation().y();
-							double destY = this.g.getNode(fruitIn.getDest()).getLocation().y();
-							if (srcY < destY) {
-								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getSrc());
-								if (tempDistance < distance) {
-									distance = tempDistance;
-									theChosenOne = f;
-									dest = fruitIn.getSrc();
-									if (dest == temp.src) {
-										dest = fruitIn.getDest();
-									}
-								}
-							}
-							else {
-								double tempDistance = this.ga.shortestPathDist(temp.src, fruitIn.getDest());
-								if (tempDistance < distance) {
-									distance = tempDistance;
-									theChosenOne = f;
-									dest = fruitIn.getDest();
-									if (dest == temp.src) {
-										dest = fruitIn.getSrc();
-									}
-								}
-							}
-						}
-					}
-				}
-
-				if (dest == -1) {
-					System.out.println("Error"); 
-					this.game.chooseNextEdge(temp.getId(), -1);
-				}
-				else {
-					List<node_data> path =  this.ga.shortestPath(temp.src, dest);
-					theChosenOne.onSight = temp.getId();
-					if (path.size() > 1)
-					this.game.chooseNextEdge(temp.getId(), path.get(1).getKey());
+		for (String string : robots) {
+			Fruit destFruit = null;
+			robot temp = new robot(string);
+			boolean hasFruits = false;
+			for (Fruit Fruit : this.runFruits) {
+				if (Fruit.onSight == temp.id) {
+					destFruit = Fruit;
+					hasFruits = true;
 					break;
 				}
 			}
+			if (hasFruits) {
+				edge_data fruitIn = null;
+				Collection<node_data> Nodes = this.g.getV();
+				for (node_data i : Nodes) {
+					for (node_data j : Nodes) {
+						double x1 = i.getLocation().x(), x2 = j.getLocation().x();
+						double y1 = i.getLocation().y(), y2 = j.getLocation().y();
+						double m = (y1 - y2) / (x1 - x2);
+						double y = (m * (destFruit.location.x() - x1)) + y1;
+						if (y + epsilon > destFruit.getLocation().y() && y - epsilon < destFruit.getLocation().y())
+							fruitIn = this.g.getEdge(i.getKey(), j.getKey());
+					}
+				}
+				if (destFruit.type == -1) dest = Math.max(fruitIn.getSrc(), fruitIn.getDest());
+				if (destFruit.type == 1) dest = Math.min(fruitIn.getSrc(), fruitIn.getDest());
+				if (dest == temp.src) {
+					if (destFruit.type == -1) {
+						dest = Math.min(fruitIn.getSrc(), fruitIn.getDest());
+						this.game.chooseNextEdge(temp.id, dest);
+						continue;
+					}
+					if (destFruit.type == 1) {
+						dest = Math.max(fruitIn.getSrc(), fruitIn.getDest());
+						this.game.chooseNextEdge(temp.id, dest);
+						continue;
+					}
+				}
+				List<node_data> path =  this.ga.shortestPath(temp.src, dest);
+				this.game.chooseNextEdge(temp.getId(), path.get(1).getKey());
+
+			}
+			else {
+				double Weight = Double.POSITIVE_INFINITY;
+				Fruit fruitDest = null;
+				for (Fruit fruit : this.runFruits) {
+					edge_data fruitIn = null;
+					if (fruit.onSight == -1) {
+						Collection<node_data> Nodes = this.g.getV();
+						for (node_data i : Nodes) {
+							for (node_data j : Nodes) {
+								double x1 = i.getLocation().x(), x2 = j.getLocation().x();
+								double y1 = i.getLocation().y(), y2 = j.getLocation().y();
+								double m = (y1 - y2) / (x1 - x2);
+								double y = (m * (fruit.location.x() - x1)) + y1;
+								if (y + epsilon > fruit.getLocation().y() && y - epsilon < fruit.getLocation().y()) {
+									fruitIn = this.g.getEdge(i.getKey(), j.getKey());
+								}
+							}
+							if (fruitIn != null) {
+								if (fruit.type == -1)dest = Math.max(fruitIn.getDest(), fruitIn.getSrc());
+								if (fruit.type == 1)dest = Math.min(fruitIn.getDest(), fruitIn.getSrc());
+							}
+						}
+					}
+					Graph_Algo t = new Graph_Algo(this.g);
+					System.out.println(temp.src + "   " + dest);
+					if(dest != -1) {
+						double tempWeight = t.shortestPathDist(temp.src, dest);
+						if (tempWeight < Weight) {
+							Weight = tempWeight;
+							fruitDest = fruit;
+						}
+					}
+				}
+				fruitDest.onSight = temp.id;
+			}
 		}
 	}
+
 
 
 	public void moveGame() {
@@ -544,46 +524,49 @@ public class MyGameGUI implements Runnable {
 	 * Depending on the location of each fruit on the graph, the robot will be set on the graph in order to get the highest score.
 	 */
 	public void addAutomaticlRobots() {		
-		double epsilon = 0.000000001;
-		List<String> fruitsString = this.game.getFruits();
-		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
-		for (String string : fruitsString) {
-			fruits.add(new Fruit(string));
-		}
-		int x = 0;
-		for (; x < this.robots; x++) {
-			Fruit max = null;
-			for (Fruit fruit : fruits) {
-				if (max == null)max = fruit;
-				else if(max.value < fruit.value);
-				max = fruit;
-			}
-			Collection<node_data> Nodes = this.g.getV();
-			edge_data fruitIn = null;
-			for (node_data i : Nodes) {
-				for (node_data j : Nodes) {
-					if (i.getKey() == j.getKey())continue;
-					double x1 = i.getLocation().x(), x2 = j.getLocation().x();
-					double y1 = i.getLocation().y(), y2 = j.getLocation().y();
-					double m = (y1 - y2) / (x1 - x2);
-					double y = (m * (max.location.x() - x1)) + y1;
-					if (y + epsilon > max.getLocation().y() && y - epsilon < max.getLocation().y()) fruitIn = this.g.getEdge(i.getKey(), j.getKey());
-					if (fruitIn != null)break;
-				}
-
-				if (fruitIn != null)break;
-			}
-			int srcKey = fruitIn.getSrc();
-			int destKey = fruitIn.getDest();
-			if (max.type == -1) {
-				this.game.addRobot(Math.max(srcKey, destKey));
-
-			}
-			else {
-				this.game.addRobot(Math.min(srcKey, destKey));
-			}
-			fruits.remove(max);
-		}
+		this.game.addRobot(39);
+		this.game.addRobot(16);
+		
+//		double epsilon = 0.000000001;
+//		List<String> fruitsString = this.game.getFruits();
+//		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
+//		for (String string : fruitsString) {
+//			fruits.add(new Fruit(string));
+//		}
+//		int x = 0;
+//		for (; x < this.robots; x++) {
+//			Fruit max = null;
+//			for (Fruit fruit : fruits) {
+//				if (max == null)max = fruit;
+//				else if(max.value < fruit.value);
+//				max = fruit;
+//			}
+//			Collection<node_data> Nodes = this.g.getV();
+//			edge_data fruitIn = null;
+//			for (node_data i : Nodes) {
+//				for (node_data j : Nodes) {
+//					if (i.getKey() == j.getKey())continue;
+//					double x1 = i.getLocation().x(), x2 = j.getLocation().x();
+//					double y1 = i.getLocation().y(), y2 = j.getLocation().y();
+//					double m = (y1 - y2) / (x1 - x2);
+//					double y = (m * (max.location.x() - x1)) + y1;
+//					if (y + epsilon > max.getLocation().y() && y - epsilon < max.getLocation().y()) fruitIn = this.g.getEdge(i.getKey(), j.getKey());
+//					if (fruitIn != null)break;
+//				}
+//
+//				if (fruitIn != null)break;
+//			}
+//			int srcKey = fruitIn.getSrc();
+//			int destKey = fruitIn.getDest();
+//			if (max.type == -1) {
+//				this.game.addRobot(Math.max(srcKey, destKey));
+//
+//			}
+//			else {
+//				this.game.addRobot(Math.min(srcKey, destKey));
+//			}
+//			fruits.remove(max);
+//		}
 	}
 
 	/*
@@ -680,10 +663,10 @@ public class MyGameGUI implements Runnable {
 		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.5 , "Your highest score at stage 23 is:" + Stages[10]);
 	}
 
-	
+
 	public void globalScore() {
 		StdDraw.clear();
-		
-		
+
+
 	}
 }
