@@ -213,11 +213,6 @@ public class MyGameGUI implements Runnable {
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
 		Runnable gameShow = new Runnable() {
-
-/*
- * MyGameGUI implements the interface Runnable, therefore, we have to use the run method in order to 
- * start using the thread. While playing, the thread adds the specific String of each robot and fruit to the kml file.
- */
 			@Override
 			public void run() {
 				moveGame();
