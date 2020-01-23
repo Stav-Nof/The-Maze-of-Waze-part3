@@ -132,4 +132,73 @@ public class score {
 		return Stages;
 	}
 
+
+	public static int global(int id, int level, int yourScore) {
+		int ans = 1;
+		int moves = 0, Grade=0;
+
+		if (level == 0) {
+			moves = 290;
+			Grade = 125;
+		}
+		if (level == 1) {
+			moves = 580;
+			Grade = 436;
+		}
+		if (level == 3) {
+			moves = 580;
+			Grade = 713;
+		}
+		if (level == 5) {
+			moves = 500;
+			Grade = 570;
+		}
+		if (level == 9) {
+			moves = 580;
+			Grade = 480;
+		}
+		if (level == 11) {
+			moves = 580;
+			Grade = 1050;
+		}
+		if (level == 13) {
+			moves = 580;
+			Grade = 310;
+		}
+		if (level == 16) {
+			moves = 290;
+			Grade = 235;
+		}
+		if (level == 19) {
+			moves = 580;
+			Grade = 250;
+		}
+		if (level == 20) {
+			moves = 290;
+			Grade = 200;
+		}
+		if (level == 23) {
+			moves = 1140;
+			Grade = 1000;
+		}
+		try {
+			String jdbcUrl="jdbc:mysql://db-mysql-ams3-67328-do-user-4468260-0.db.ondigitalocean.com:25060/oop?useUnicode=yes&characterEncoding=UTF-8&useSSL=false";
+			String jdbcUser="student";
+			String jdbcUserPassword="OOP2020student";
+			String allCustomersQuery = "SELECT * FROM Logs where levelID="+ level + ";";
+			Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcUserPassword);
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(allCustomersQuery);
+			while(resultSet.next()) {
+				int globalscore = resultSet.getInt("score");
+				int globalmoves = resultSet.getInt("moves");
+				if (globalmoves <= moves && globalscore >= Grade) {
+					if(globalscore > yourScore) ans++;
+				}
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ans;
+	}
 }

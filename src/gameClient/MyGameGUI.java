@@ -201,7 +201,15 @@ public class MyGameGUI implements Runnable {
 		this.addAutomaticlRobots();
 		this.drawrobots();
 		KML_Logger.openFile((level) + ".kml");
-		Game_Server.login(205479694);//TODO add your id 
+		int id = 0;
+		String idS = JOptionPane.showInputDialog(new JFrame(),"enter your id", null);
+		try {
+			id = Integer.parseInt(idS);
+		}catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(new JFrame(), "the action was canceled");
+			return;
+		}
+		Game_Server.login(id);
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
 		Runnable gameShow = new Runnable() {
@@ -666,6 +674,29 @@ public class MyGameGUI implements Runnable {
 
 	public void globalScore() {
 		StdDraw.clear();
+		StdDraw.setFont(new Font("arial", Font.PLAIN, 20));
+		StdDraw.setPenColor(Color.GREEN);
+		int id = 0;
+		String idS = JOptionPane.showInputDialog(new JFrame(),"enter your id", null);
+		try {
+			id = Integer.parseInt(idS);
+		}catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(new JFrame(), "the action was canceled");
+			return;
+		}
+		int []Stages = score.CurrentStage(id);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 4 , "In Stage 0 your place in relative to the class is: " + score.global(id, 0, Stages[0]) + "."); 
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.05 , "In Stage 1 your place in relative to the class is: " + score.global(id, 1, Stages[1]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.1 , "In Stage 3 your place in relative to the class is: " + score.global(id, 3, Stages[2]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.15 , "In Stage 5 your place in relative to the class is: " + score.global(id, 5, Stages[3]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.2 , "In Stage 9 your place in relative to the class is: " + score.global(id, 9, Stages[4]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.25 , "In Stage 11 your place in relative to the class is: " + score.global(id, 11, Stages[5]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.3 , "In Stage 13 your place in relative to the class is: " + score.global(id, 13, Stages[6]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.35 , "In Stage 16 your place in relative to the class is: " + score.global(id, 16, Stages[7]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.4 , "In Stage 19 your place in relative to the class is: " + score.global(id, 19, Stages[8]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.45 , "In Stage 20 your place in relative to the class is: " + score.global(id, 20, Stages[9]) + ".");
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5), (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.5 , "In Stage 23 your place in relative to the class is: " + score.global(id, 23, Stages[10]) + ".");
+
 
 
 	}
