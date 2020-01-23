@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import com.google.gson.Gson;
+
 import Server.Game_Server;
 import Server.game_service;
 import algorithms.Graph_Algo;
@@ -29,6 +31,7 @@ public class MyGameGUI implements Runnable {
 	int thread;
 	Graph_Algo ga;
 	public String type;
+	LinkedList<Fruit> runFruits;
 	int movesCounter = 0;
 
 	public MyGameGUI() {
@@ -209,7 +212,7 @@ public class MyGameGUI implements Runnable {
 		};
 		Thread thread1 = new Thread(gameShow);
 		thread1.start();
-		
+
 		while (this.game.isRunning()) {
 			startGameAutomatic();
 			runGame();
@@ -272,7 +275,7 @@ public class MyGameGUI implements Runnable {
 		};
 		Thread thread1 = new Thread(gameShow);
 		thread1.start();
-		
+
 		while (this.game.isRunning()) {
 			startGameAutomatic();
 			runGame();
@@ -360,11 +363,31 @@ public class MyGameGUI implements Runnable {
 	 * automatically : how the robots move, how the fruits are set on the graph ,etc...
 	 */
 	public void startGameAutomatic() {
+		if (this.runFruits == null) {
+			List<String> fruitsS = this.game.getFruits();
+			LinkedList<Fruit> fruits = new LinkedList<Fruit>();
+			for (String string : fruitsS) {
+				fruits.add(new Fruit(string));
+			}
+			this.runFruits = fruits;
+		}
 		List<String> fruitsS = this.game.getFruits();
 		LinkedList<Fruit> fruits = new LinkedList<Fruit>();
 		for (String string : fruitsS) {
 			fruits.add(new Fruit(string));
 		}
+		boolean Similar = true;
+		Iterator<Fruit> it = fruits.iterator();
+		Fruit fTemp = null;
+		for (Fruit i : runFruits) {
+			if (it.hasNext()) fTemp = it.next();
+			if (i.location.x() == fTemp.location.x() && i.location.y() == fTemp.location.y()) continue;
+			else {
+				Similar = false;
+				break;
+			}
+		}
+		if (!Similar )this.runFruits = fruits;
 		List<String> robots = this.game.getRobots();
 		for (String i : robots) {
 			robot temp = new robot(i);
@@ -375,8 +398,25 @@ public class MyGameGUI implements Runnable {
 				double distance = Double.POSITIVE_INFINITY;
 				Fruit theChosenOne = null;
 				edge_data fruitIn = null;
-				for (Fruit f : fruits) {
-					if (f.onSight) continue;
+				for (Fruit f : this.runFruits) {
+					if (f.onSight != 0 && f.onSight == temp.getDest()) {
+						for (node_data i1 : Nodes) {
+							for (node_data j : Nodes) {
+								double x1 = i1.getLocation().x(), x2 = j.getLocation().x();
+								double y1 = i1.getLocation().y(), y2 = j.getLocation().y();
+								double m = (y1 - y2) / (x1 - x2);
+								double y = (m * (f.location.x() - x1)) + y1;
+								if (y + epsilon > f.getLocation().y() && y - epsilon < f.getLocation().y())
+									fruitIn = this.g.getEdge(i1.getKey(), j.getKey());
+							}
+						}
+						theChosenOne = f;
+						dest = fruitIn.getSrc();
+						List<node_data> path =  this.ga.shortestPath(temp.src, dest);
+						theChosenOne.onSight = temp.getId();
+						if (path.size() > 1) this.game.chooseNextEdge(temp.getId(), path.get(1).getKey());
+						break;
+					}
 					for (node_data i1 : Nodes) {
 						for (node_data j : Nodes) {
 							double x1 = i1.getLocation().x(), x2 = j.getLocation().x();
@@ -449,8 +489,10 @@ public class MyGameGUI implements Runnable {
 				}
 				else {
 					List<node_data> path =  this.ga.shortestPath(temp.src, dest);
-					theChosenOne.onSight = true;
+					theChosenOne.onSight = temp.getId();
+					if (path.size() > 1)
 					this.game.chooseNextEdge(temp.getId(), path.get(1).getKey());
+					break;
 				}
 			}
 		}
@@ -493,8 +535,8 @@ public class MyGameGUI implements Runnable {
 			points = points + temp.getPoints();
 		}
 		StdDraw.setPenColor(Color.BLUE);
-		StdDraw.textRight(((StdDraw.xmax + StdDraw.xmin) / 2), ((StdDraw.ymax + StdDraw.ymin) / 2) + 0.001, "game end");
-		StdDraw.textRight(((StdDraw.xmax + StdDraw.xmin) / 2), ((StdDraw.ymax + StdDraw.ymin) / 2), "your points: " + points);
+		StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 2), ((StdDraw.ymax + StdDraw.ymin) / 2) + 0.001, "game end");
+		StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 2), ((StdDraw.ymax + StdDraw.ymin) / 2), "your points: " + points);
 	}
 
 	/*
@@ -553,6 +595,95 @@ public class MyGameGUI implements Runnable {
 		if (this.type.equals("manual")) manualGame();
 		if (this.type.equals("automatic")) automaticGame();
 		if (this.type.equals("automatic with KML")) automaticGameWithKML();
+		if (this.type.equals("your score")) yourScore();
+		if (this.type.equals("global score")) globalScore();
+	}
 
+
+	//////////////////////////score//////////////////////////
+
+	public void yourScore() {
+		StdDraw.clear();
+		StdDraw.setFont(new Font("arial", Font.PLAIN, 20));
+		StdDraw.setPenColor(Color.GREEN);
+		int id = 0;
+		String idS = JOptionPane.showInputDialog(new JFrame(),"enter your id", null);
+		try {
+			id = Integer.parseInt(idS);
+		}catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(new JFrame(), "the action was canceled");
+		}
+		StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 4 , "you played " + score.numberOfGames(id) +" times");
+		int []Stages = score.CurrentStage(id);
+		for (int i = 0; i < Stages.length; i++) {
+			if (Stages[i] == 0) {
+				if (i == 0) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 0");
+					break;
+				}
+				if (i == 1) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 1");
+					break;
+				}
+				if (i == 2) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 3");
+					break;
+				}
+				if (i == 3) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 5");
+					break;
+				}
+				if (i == 4) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 9");
+					break;
+				}
+				if (i == 5) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 11");
+					break;
+				}
+				if (i == 6) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 13");
+					break;
+				}
+				if (i == 7) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 16");
+					break;
+				}
+				if (i == 8) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 19");
+					break;
+				}
+				if (i == 9) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 20");
+					break;
+				}
+				if (i == 10) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "you now at level 23");
+					break;
+				}
+				if (i == 11) {
+					StdDraw.text(((StdDraw.xmax + StdDraw.xmin) / 5), ((StdDraw.ymax + StdDraw.ymin) / 5) * 3 , "You have finished the game");
+					break;
+				}
+			}
+		}
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, ((StdDraw.ymax + StdDraw.ymin) / 5) * 4 , "Your highest score at stage 0 is: " + Stages[0]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.05 , "Your highest score at stage 1 is:" + Stages[1]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.1 , "Your highest score at stage 3 is:" + Stages[2]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.15 , "Your highest score at stage 5 is:" + Stages[3]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.2 , "Your highest score at stage 9 is:" + Stages[4]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.25 , "Your highest score at stage 11 is:" + Stages[5]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.3 , "Your highest score at stage 13 is:" + Stages[6]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.35 , "Your highest score at stage 16 is:" + Stages[7]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.4 , "Your highest score at stage 19 is:" + Stages[8]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.45 , "Your highest score at stage 20 is:" + Stages[9]);
+		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.5 , "Your highest score at stage 23 is:" + Stages[10]);
+	}
+
+	
+	public void globalScore() {
+		StdDraw.clear();
+		
+		
 	}
 }

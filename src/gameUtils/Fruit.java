@@ -9,7 +9,7 @@ public class Fruit {
 	public String image;
 	public double value;
 	public int type;
-	public boolean onSight;
+	public int onSight;
 
 /*
  * Builds the object fruit from a json String
@@ -20,7 +20,7 @@ public class Fruit {
 		this.location = new Point3D(temp.pos);
 		this.value = temp.value;
 		this.type = temp.type;
-		this.onSight = false;
+		this.onSight = 0;
 		if (temp.type == -1) {
 			this.image = "Images/down.png";
 		}
