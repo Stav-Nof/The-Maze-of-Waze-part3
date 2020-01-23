@@ -213,6 +213,11 @@ public class MyGameGUI implements Runnable {
 		this.game.startGame();
 		StdDraw.enableDoubleBuffering();
 		Runnable gameShow = new Runnable() {
+
+/*
+ * MyGameGUI implements the interface Runnable, therefore, we have to use the run method in order to 
+ * start using the thread. While playing, the thread adds the specific String of each robot and fruit to the kml file.
+ */
 			@Override
 			public void run() {
 				moveGame();
@@ -256,7 +261,13 @@ public class MyGameGUI implements Runnable {
 		game.sendKML(KML_Logger.KMLtoString(level + ".kml"));
 	}
 
-
+/*
+ * Automatically runs the game by doing many different actions.
+ * The graphic interface gives the player to choose wich level he would like to play,
+ * all the rest is automatically decided by the server. We can see in this method that 
+ * we call the server in order to move the robots and the fruits.
+ * Mostly, the game is ran by the help of the server.
+ */
 	public void automaticGame() {
 		int levelToPrint = levelSelect();
 		this.GameServer = new GameServer();
@@ -486,7 +497,9 @@ public class MyGameGUI implements Runnable {
 	}
 
 
-
+/*
+ * This method is one of the components in order to refresh the screen while the game is Running.
+ */
 	public void moveGame() {
 		while (this.game.isRunning()){
 			this.game.move();
@@ -593,6 +606,10 @@ public class MyGameGUI implements Runnable {
 
 	//////////////////////////score//////////////////////////
 
+/*
+ * This methods displays to the players (according to it's ID that was entered), how many games were played, how many time
+ * the player played, the score for each stage and the current level the player has to pass.
+ */
 	public void yourScore() {
 		StdDraw.clear();
 		StdDraw.setFont(new Font("arial", Font.PLAIN, 20));
@@ -671,7 +688,10 @@ public class MyGameGUI implements Runnable {
 		StdDraw.textLeft(((StdDraw.xmax + StdDraw.xmin) / 5)*3, (((StdDraw.ymax + StdDraw.ymin) / 5) * 4) - 0.5 , "Your highest score at stage 23 is:" + Stages[10]);
 	}
 
-
+/*
+ * This method gives the global score of the player compared to the scores of the other students. 
+ * The method is getting the scores of each players from the database. 
+ */
 	public void globalScore() {
 		StdDraw.clear();
 		StdDraw.setFont(new Font("arial", Font.PLAIN, 20));

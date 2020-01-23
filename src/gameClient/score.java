@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class score {
+	/*
+	 * Returns the Number of Games that were played.
+	 * This method is getting data from the database according to a given username,password, url and ID.
+	 */
 	public static int numberOfGames(int id){
 		int counter = 0;
 		try {
@@ -33,7 +37,12 @@ public class score {
 		return counter;
 	}
 
-
+/*
+ * 	This method calculates the current Stage according to the points that the player got after the game.
+ *	The function calculates for each level, if the player got enough points in order to pass the current Stage.
+ *	Since we were given a certain number of points to get in order to get to the next stage, the function will return 
+ *	if we passed or not.
+ */
 	public static int[] CurrentStage(int id) {
 		int []Stages = new int[12];
 		try {
